@@ -15,6 +15,7 @@ void ScanModbusFOC_ID(SoftwareSerial* port, TF* Lidar)
   if (port->available() > 5) {
     Lidar->BaudRate = UartFoc[i];
     Lidar->LidarFlag = true;
+    Lidar->receiveComplete = false;
   }
   ScanFlag = 1;
 }
@@ -23,6 +24,7 @@ void ModbusRead(SoftwareSerial * port, TF * Lidar)
 {
   unsigned int i = 0;
   unsigned int crc16;  //校验位
+  port->listen();
   while (port->available() > 0) {
     Modbus_Read[i] = port->read();
     i++;
@@ -32,6 +34,7 @@ void ModbusRead(SoftwareSerial * port, TF * Lidar)
   {
     if (Modbus_Read[0] == Lidar->ID && Modbus_Read[1] == FUNCHTION_ID && Modbus_Read[2] == 0x04) {
       crc16 = ((Modbus_Read[7] << 8) | Modbus_Read[8]);
+      Serial.println("OK");
       if (calculateCRC(&Modbus_Read[0], 7) == crc16) {
         Lidar->distance = Modbus_Read[3] * 256 +  Modbus_Read[4];
         Lidar->strength = Modbus_Read[5] * 256 +  Modbus_Read[6];

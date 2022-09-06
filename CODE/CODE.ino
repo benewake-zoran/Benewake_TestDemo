@@ -124,14 +124,16 @@ void loop(void) {
         DisplayFlag = 1;
       }
       if (ScanFlag == 1  && Lidar.LidarFlag == true) {
+        
         while (!Lidar.receiveComplete) {
           ModbusWrite(&port_485, &Lidar);
+          delay(5);                       //@zoran 20220424：修正485进入不了数据显示界面问题
           ModbusRead(&port_485, &Lidar);
           if (Lidar.receiveComplete) {
             DisplayFlag = 1;
           }
         }
-        delay(100);
+        delay(30);
       }
     }
     if (FunctionMode == MODE_CAN) {

@@ -5,6 +5,9 @@
 SoftwareSerial port(5, 4);   //SoftwareSerial port(RX, TX);
 SoftwareSerial port_485(10, 9);   //SoftwareSerial port(RX, TX);
 
+#define BENEWAKE_LOGO "Benewake"
+#define SOFTWARE_VER  "Demo V3"
+
 typedef struct {
   int distance = 0;
   int strength = 0;

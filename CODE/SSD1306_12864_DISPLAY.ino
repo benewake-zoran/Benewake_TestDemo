@@ -3,9 +3,9 @@ void Display_Boot()
   u8g2.firstPage();
   do {
     u8g2.setFont(u8g2_font_ncenB10_tr);
-    u8g2.drawStr(10, 15, "Benewake");
+    u8g2.drawStr(10, 15, BENEWAKE_LOGO);
     u8g2.setFont(u8g2_font_ncenB10_tr);
-    u8g2.drawStr(10, 50, "Demo A");
+    u8g2.drawStr(10, 50, SOFTWARE_VER);
   } while ( u8g2.nextPage() );
 }
 
