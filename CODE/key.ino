@@ -6,7 +6,7 @@ void key_scan()//按键扫描函数 放在定时中断里
     uiKeyTimeCnt1 = 0; //按键去抖动延时计数器清零，此行非常巧妙，是我实战中摸索出来的。
     if (ucShortTouchFlag1 == 1) //短按触发标志
     {
-      Serial.println("-------");
+  //    Serial.println("-------");
       ucShortTouchFlag1 = 0;
       ucKeySec = 1;  //触发一号键的短按
     }
@@ -68,26 +68,26 @@ void key_Service() {
         case 4: break;
         default: break;
       }
-      if (FunctionMode > 6)FunctionMode = 1;
+      if (FunctionMode > FuncNum)FunctionMode = 1;  
       DisplayFlag = 1;
       ucKeySec = 0;
     }
   }
 }
 
-
-void key_Service_Test() {
-  if (ucKeySec != 0) {
-    Serial.println(ucKeySec);
-  }
-  if (ucKeySec == 1) {
-    Serial.println("按键1短按");
-  } else if (ucKeySec == 2) {
-    Serial.println("按键1长按");
-  } else if (ucKeySec == 3) {
-    Serial.println("按键2短按");
-  } else if (ucKeySec == 4) {
-    Serial.println("按键2长按");
-  }
-  ucKeySec = 0;
-}
+//按键测试
+//void key_Service_Test() {
+//  if (ucKeySec != 0) {
+//    Serial.println(ucKeySec);
+//  }
+//  if (ucKeySec == 1) {
+//    Serial.println("按键1短按");
+//  } else if (ucKeySec == 2) {
+//    Serial.println("按键1长按");
+//  } else if (ucKeySec == 3) {
+//    Serial.println("按键2短按");
+//  } else if (ucKeySec == 4) {
+//    Serial.println("按键2长按");
+//  }
+//  ucKeySec = 0;
+//}

@@ -14,7 +14,7 @@
 U8G2_SSD1306_128X64_NONAME_1_HW_I2C u8g2(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
 
 void setup(void) {
-  Serial.begin(9600);
+  //Serial.begin(9600);
   pinMode(SWITCH_A_PIN, INPUT_PULLUP);
   pinMode(SWITCH_B_PIN, INPUT_PULLUP);
   MsTimer2::set(KEY_TIME, key_scan);
@@ -45,6 +45,7 @@ void loop(void) {
         case MODE_485_Modbus  : Display_Menu_P4_485() ; break;
         case MODE_CAN         : Display_Menu_P5_CAN() ; break;
         case MODE_IIC_TF      : Display_Menu_P6_IIC() ; break;
+        case MODE_IO_TF       : Display_Menu_P7_IO()  ; break;
       }
     }
   }
@@ -124,7 +125,7 @@ void loop(void) {
         DisplayFlag = 1;
       }
       if (ScanFlag == 1  && Lidar.LidarFlag == true) {
-        
+
         while (!Lidar.receiveComplete) {
           ModbusWrite(&port_485, &Lidar);
           delay(5);                       //@zoran 20220424：修正485进入不了数据显示界面问题
@@ -172,39 +173,50 @@ void loop(void) {
         }
       }
     }
-  }
-  if (WindowNum == WINDOW_DATA) {
-    if (DisplayFlag == 1) {
-      switch (FunctionMode) {
-        case MODE_TTL_TF      : Display_BW_TTL(&Lidar) ; break;
-        case MODE_TTL_TF_LC02 : Display_ODM_LC02(&Lidar) ; break;
-        case MODE_TTL_TF40    : Display_ODM_TF40(&Lidar) ; break;
-        case MODE_485_Modbus  : Display_BW_485(&Lidar) ; break;
-        case MODE_CAN         : Display_BW_CAN(&Lidar) ; break;
-        case MODE_IIC_TF      : Display_BW_IIC(&Lidar) ; break;
+    if (FunctionMode == MODE_IO_TF) {
+      if (Lidar.LidarFlag == false) {   //代替IO口初始化
+        pinMode(0, INPUT);    // sets the digital pin 13 as output
+        Lidar.LidarFlag = true;
       }
-      DisplayFlag = 0;
-     }
-  }
-  if (WindowNum == WINDOW_ERROR) {
-    if (DisplayFlag == 1) {
-      DisplayFlag = 0;
-      Display_Scan_Error(&Lidar);
+      if (Lidar.LidarFlag == true) {
+        Lidar.IO = digitalRead(0);
+        DisplayFlag = 1;
+      }
     }
-  }
-  if (Lidar.receiveComplete) {
-    // SerialPrint_Debug();
-    Lidar.distance = 0;
-    Lidar.receiveComplete = false;
+    if (WindowNum == WINDOW_DATA) {
+      if (DisplayFlag == 1) {
+        switch (FunctionMode) {
+          case MODE_TTL_TF      : Display_BW_TTL(&Lidar) ; break;
+          case MODE_TTL_TF_LC02 : Display_ODM_LC02(&Lidar) ; break;
+          case MODE_TTL_TF40    : Display_ODM_TF40(&Lidar) ; break;
+          case MODE_485_Modbus  : Display_BW_485(&Lidar) ; break;
+          case MODE_CAN         : Display_BW_CAN(&Lidar) ; break;
+          case MODE_IIC_TF      : Display_BW_IIC(&Lidar) ; break;
+          case MODE_IO_TF       : Display_BW_IO(&Lidar) ; break;
+        }
+        DisplayFlag = 0;
+      }
+    }
+    if (WindowNum == WINDOW_ERROR) {
+      if (DisplayFlag == 1) {
+        DisplayFlag = 0;
+        Display_Scan_Error(&Lidar);
+      }
+    }
+    if (Lidar.receiveComplete) {
+      // SerialPrint_Debug();
+      Lidar.distance = 0;
+      Lidar.receiveComplete = false;
+    }
   }
 }
 
-void SerialPrint_Debug() {
-  Serial.print("DIST = ");
-  Serial.print(Lidar.distance);
-  Serial.print(" AMP = ");
-  Serial.println(Lidar.strength);
-}
+//void SerialPrint_Debug() {
+//  Serial.print("DIST = ");
+//  Serial.print(Lidar.distance);
+//  Serial.print(" AMP = ");
+//  Serial.println(Lidar.strength);
+//}
 void serialEvent() {
   if (FunctionMode == MODE_TTL_TF_LC02) {
     getLidarDataFromLC02(&Lidar);

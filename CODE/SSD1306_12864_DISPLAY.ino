@@ -76,6 +76,17 @@ void Display_Menu_P6_IIC()
   } while ( u8g2.nextPage() );
 }
 
+
+void Display_Menu_P7_IO()
+{
+  u8g2.firstPage();
+  do {
+    u8g2.setFont(u8g2_font_ncenB10_tr);
+    u8g2.drawStr(0, 15, "P7-IO-PORT");
+    u8g2.setFont(u8g2_font_fub20_tf);
+    u8g2.drawStr(0, 56, "TF series");
+  } while ( u8g2.nextPage() );
+}
 //北醒485版本数据更新显示界面
 void Display_BW_485(TF* Lidar)
 {
@@ -183,6 +194,19 @@ void Display_BW_IIC(TF* Lidar)
     u8g2.setFont(u8g2_font_fub20_tf);
     u8g2.setCursor(0, 56);
     u8g2.print(Lidar->distance);
+  } while ( u8g2.nextPage() );
+}
+
+//北醒IIC通用版本数据更新显示界面
+void Display_BW_IO(TF* Lidar)
+{
+  u8g2.firstPage();
+  do {
+    u8g2.setFont(u8g2_font_fub20_tf);
+    u8g2.setCursor(0, 56);
+    u8g2.print("IO:");
+    u8g2.setCursor(75, 56);
+    u8g2.print(Lidar->IO);
   } while ( u8g2.nextPage() );
 }
 

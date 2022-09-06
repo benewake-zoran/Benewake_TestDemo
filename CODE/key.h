@@ -5,6 +5,8 @@
 #define SWITCH_B_PIN    2
 #define const_key_time  50    //按键去抖动延时的时间
 
+#define FuncNum   7           //定义功能界面数量
+
 unsigned char KeyLock    = 0;
 unsigned int  KeyTimeCnt = 0;
 
