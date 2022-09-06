@@ -20,7 +20,7 @@ TF Lidar;
 
 
 static long int CanFoc[7] = {250000, 125000, 800000, 500000, 1000000, 400000, 100000};
-long int UartFoc[6] = {9600, 115200 , 19200, 38400, 57600, 921600};
+long int UartFoc[6] = {9600, 115200 , 19200, 38400, 57600};
 
 
 bool DisplayFlag = false;   //是否需要刷新显示的标志

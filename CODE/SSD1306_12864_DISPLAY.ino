@@ -38,7 +38,7 @@ void Display_Menu_P3_TTL()
     u8g2.setFont(u8g2_font_ncenB10_tr);
     u8g2.drawStr(0, 15, "P3-TTL-PORT");
     u8g2.setFont(u8g2_font_fub20_tf);
-    u8g2.drawStr(0, 56, "TF-TF40");
+    u8g2.drawStr(0, 56, "TF40");
   } while ( u8g2.nextPage() );
 }
 
@@ -76,25 +76,101 @@ void Display_Menu_P6_IIC()
   } while ( u8g2.nextPage() );
 }
 
-
-
-void Display_CAN_IIC_485(TF* Lidar)
+//北醒485版本数据更新显示界面
+void Display_BW_485(TF* Lidar)
 {
   u8g2.firstPage();
   do {
     u8g2.setFont(u8g2_font_ncenB10_tr);
     u8g2.setCursor(0, 15);
+    u8g2.print("F:");
+    u8g2.print(Lidar->BaudRate);
+    u8g2.setCursor(70, 15);
     u8g2.print("ID:0x");
     u8g2.print(Lidar->ID, HEX);
-    u8g2.setCursor(63, 15);
-    u8g2.print("S:");
+    u8g2.setCursor(75, 56);
     u8g2.print(Lidar->strength);
     u8g2.setFont(u8g2_font_fub20_tf);
-    u8g2.setCursor(30, 56);
+    u8g2.setCursor(0, 56);
     u8g2.print(Lidar->distance);
   } while ( u8g2.nextPage() );
 }
-void Display_TTL_TF40_LC02(TF* Lidar)
+
+//北醒485版本数据更新显示界面
+void Display_BW_CAN(TF* Lidar)
+{
+  u8g2.firstPage();
+  do {
+    u8g2.setFont(u8g2_font_ncenB10_tr);
+    u8g2.setCursor(0, 15);
+    u8g2.print("F:");
+    u8g2.print(Lidar->BaudRate/1000);
+    u8g2.print("K");
+    u8g2.setCursor(70, 15);
+    u8g2.print("ID:0x");
+    u8g2.print(Lidar->ID, HEX);
+    u8g2.setCursor(75, 56);
+    u8g2.print(Lidar->strength);
+    u8g2.setFont(u8g2_font_fub20_tf);
+    u8g2.setCursor(0, 56);
+    u8g2.print(Lidar->distance);
+  } while ( u8g2.nextPage() );
+}
+
+
+//ODM LC02显示界面
+void Display_ODM_LC02(TF* Lidar)
+{
+  u8g2.firstPage();
+  do {
+    u8g2.setFont(u8g2_font_ncenB10_tr);
+    u8g2.setCursor(0, 15);
+    u8g2.print("F:");
+    u8g2.print(Lidar->BaudRate);
+    u8g2.setFont(u8g2_font_fub20_tf);
+    u8g2.setCursor(10, 56);
+    u8g2.print(Lidar->distance);
+  } while ( u8g2.nextPage() );
+}
+
+//ODM TF40显示界面
+void Display_ODM_TF40(TF* Lidar)
+{
+  u8g2.firstPage();
+  do {
+    u8g2.setFont(u8g2_font_ncenB10_tr);
+    u8g2.setCursor(0, 15);
+    u8g2.print("F:");
+    u8g2.print(Lidar->BaudRate);
+    u8g2.setCursor(70, 15);
+    u8g2.print("ID:0x");
+    u8g2.setFont(u8g2_font_fub20_tf);
+    u8g2.setCursor(10, 56);
+    u8g2.print(Lidar->distance);
+  } while ( u8g2.nextPage() );
+}
+
+//北醒串口通用版本数据更新显示界面
+void Display_BW_TTL(TF* Lidar)
+{
+  u8g2.firstPage();
+  do {
+    u8g2.setFont(u8g2_font_ncenB10_tr);
+    u8g2.setCursor(0, 15);
+    u8g2.print("F:");
+    u8g2.print(Lidar->BaudRate);
+    //    u8g2.setCursor(70, 15);
+    //    u8g2.print("S:");
+    u8g2.setCursor(75, 56);
+    //u8g2.print("S:");
+    u8g2.print(Lidar->strength);
+    u8g2.setFont(u8g2_font_fub20_tf);
+    u8g2.setCursor(0, 56);
+    u8g2.print(Lidar->distance);
+  } while ( u8g2.nextPage() );
+}
+//北醒IIC通用版本数据更新显示界面
+void Display_BW_IIC(TF* Lidar)
 {
   u8g2.firstPage();
   do {
@@ -102,14 +178,15 @@ void Display_TTL_TF40_LC02(TF* Lidar)
     u8g2.setCursor(0, 15);
     u8g2.print("ID:0x");
     u8g2.print(Lidar->ID, HEX);
-    u8g2.setCursor(63, 15);
-    u8g2.print("mm");
+    u8g2.setCursor(75, 56);
+    u8g2.print(Lidar->strength);
     u8g2.setFont(u8g2_font_fub20_tf);
-    u8g2.setCursor(30, 56);
+    u8g2.setCursor(0, 56);
     u8g2.print(Lidar->distance);
   } while ( u8g2.nextPage() );
 }
 
+//显示扫描错误显示界面
 void Display_Scan_Error(TF* Lidar)
 {
   u8g2.firstPage();

@@ -10,7 +10,10 @@ void ScanCanFoc(SoftwareSerial * port, TF * Lidar)
     }
     delay(100);
     //Serial.println(port->available());
-    if (port->available() > 20)Lidar->LidarFlag = true;
+    if (port->available() > 20) {
+      Lidar->BaudRate = CanFoc[i];
+      Lidar->LidarFlag = true;
+    }
     if (port->available() > 20)break;
   }
   ScanFlag = 1;

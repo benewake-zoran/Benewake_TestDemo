@@ -1,13 +1,15 @@
 #include <MsTimer2.h>
+
+#include "SSD1306_12864_DISPLAY.h"  //包含屏幕显示程序
 #include "Lidar_IIC.h"              //IIC驱动程序
 #include "Lidar_CAN.h"              //CAN驱动程序
+#include "LC02.H"
+#include "TF40.h"
 #include "Lidar_Common.h"           //雷达数据以及通用变量
-#include "SSD1306_12864_DISPLAY.h"  //包含屏幕显示程序
 #include "key.h"                    //包含按键程序
 #include "BW_TTL.h"                 //包含屏幕显示程序
 #include "MODBUS.h"
-#include "LC02.h"
-#include "TF40.h"
+
 
 U8G2_SSD1306_128X64_NONAME_1_HW_I2C u8g2(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
 
@@ -19,7 +21,6 @@ void setup(void) {
   MsTimer2::start();
 
   u8g2.begin();
-
   if (WindowNum == WINDOW_BOOT) {
     Display_Boot();
     delay(1000);
@@ -69,7 +70,8 @@ void loop(void) {
     }
     if (FunctionMode == MODE_TTL_TF_LC02) {
       if (ScanFlag == 0  && Lidar.LidarFlag == false) {
-        Serial.begin(115200);
+        Lidar.BaudRate = 115200;
+        Serial.begin(Lidar.BaudRate);
         ScanFlag = 1;
         Lidar.LidarFlag = 1;
       }
@@ -90,34 +92,19 @@ void loop(void) {
     }
     if (FunctionMode == MODE_TTL_TF40) {
       if (ScanFlag == 0  && Lidar.LidarFlag == false) {
-
-        // ScanTF40FOC_ID(&Lidar);
         ScanFlag = 1;
         Lidar.LidarFlag = true;
-        // Lidar.LidarFlag = true;
-        Serial.begin(38400);
-        //Serial.print(GET_TF40_CONTIS);
-
+        Lidar.ID = 1;
+        Lidar.BaudRate = 38400;
+        Serial.begin(Lidar.BaudRate);
       }
       if (ScanFlag == 1  && Lidar.LidarFlag == false) {
 
         WindowNum = WINDOW_ERROR;
-        
+
         DisplayFlag = 1;
       }
       if (ScanFlag == 1  && Lidar.LidarFlag == true) {
-        //        if (!statue) {
-        //          Serial.print("single");
-        //        } else {
-        //          statue = 0;
-        //          Serial.print("DIST = ");
-        //          Serial.println(Lidar.distance);
-        //          Serial.print("shuzi:");
-        //          Serial.println(zhengshu);
-        //          zifu = "";
-        //          zhengshu = 0;
-        //
-        //        }
         delay(700);
         if (!Lidar.receiveComplete)
         {
@@ -143,7 +130,7 @@ void loop(void) {
           if (Lidar.receiveComplete) {
             DisplayFlag = 1;
           }
-        } 
+        }
         delay(100);
       }
     }
@@ -186,9 +173,16 @@ void loop(void) {
   }
   if (WindowNum == WINDOW_DATA) {
     if (DisplayFlag == 1) {
+      switch (FunctionMode) {
+        case MODE_TTL_TF      : Display_BW_TTL(&Lidar) ; break;
+        case MODE_TTL_TF_LC02 : Display_ODM_LC02(&Lidar) ; break;
+        case MODE_TTL_TF40    : Display_ODM_TF40(&Lidar) ; break;
+        case MODE_485_Modbus  : Display_BW_485(&Lidar) ; break;
+        case MODE_CAN         : Display_BW_CAN(&Lidar) ; break;
+        case MODE_IIC_TF      : Display_BW_IIC(&Lidar) ; break;
+      }
       DisplayFlag = 0;
-      Display_CAN_IIC_485(&Lidar);
-    }
+     }
   }
   if (WindowNum == WINDOW_ERROR) {
     if (DisplayFlag == 1) {
@@ -203,8 +197,7 @@ void loop(void) {
   }
 }
 
-void SerialPrint_Debug()
-{
+void SerialPrint_Debug() {
   Serial.print("DIST = ");
   Serial.print(Lidar.distance);
   Serial.print(" AMP = ");
@@ -214,9 +207,6 @@ void serialEvent() {
   if (FunctionMode == MODE_TTL_TF_LC02) {
     getLidarDataFromLC02(&Lidar);
   }
-  //  if(FunctionMode == MODE_TTL_TF40 && ScanFlag == 0){
-  //    Lidar.BaudRate = StringSplitIntAndChar();
-  //  }
   if (FunctionMode == MODE_TTL_TF40 && Lidar.LidarFlag == true) {
     Lidar.distance = StringSplitIntAndChar();
     if (Lidar.distance > 0) {
