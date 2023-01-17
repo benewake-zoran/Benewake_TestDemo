@@ -1,3 +1,13 @@
+/**
+ * @file     :LC02.c
+ * @brief    :ODM产品LC02驱动程序
+ * @details  :通过串口读取LC02的程序
+ * @author   :benewake.zoran
+ * @version  :beta 1.0
+ * @date     :2023.01.17
+ * @copyright:北醒北京（光子）科技有限公司
+ */
+#include "LC02.h"
 /***************************************
  -  通讯协议：
  -  2 byte : 帧头 0x55 0xAA
@@ -10,7 +20,16 @@
  -  Arduino 发送：55 AA 81 00 FA
  -  TOF模组回复 ： 55 AA 81 03 01 55 00 FA
  **************************************/
-void getLidarDataFromLC02(TF* lidar) {
+/**
+ * @brief 获取LC02的数据
+ * @param 通过硬件串口获取LC02的数据
+ * @param[in] 无
+ * @param[out] TF 雷达参数，函数成功后用来更新
+ * @return 无
+ * @retval 无
+ */
+void getLidarDataFromLC02(TF *lidar)
+{
   static char i = 0;
   static int rx[8];
   if (Serial.available())
@@ -19,10 +38,12 @@ void getLidarDataFromLC02(TF* lidar) {
     if (rx[0] != 0x55)
     {
       i = 0;
-    } else if (i == 1 && rx[1] != 0xAA)
+    }
+    else if (i == 1 && rx[1] != 0xAA)
     {
       i = 0;
-    } else if (i == 7)
+    }
+    else if (i == 7)
     {
       i = 0;
       if (rx[7] == 0xFA)
@@ -30,7 +51,8 @@ void getLidarDataFromLC02(TF* lidar) {
         lidar->distance = rx[5] + rx[4] * 256;
         lidar->receiveComplete = true;
       }
-    } else
+    }
+    else
     {
       i++;
     }

@@ -1,2 +1,0 @@
-#include <Wire.h>
-u8 cmd[5] = {0x5a, 0x05, 0x00, 0x01, 0x60}; //Get measure value cmd
